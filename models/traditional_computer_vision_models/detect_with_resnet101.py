@@ -1,5 +1,7 @@
 import pathlib
 import sys
+import warnings
+warnings.filterwarnings('ignore')
 
 from PIL import Image
 import torch
@@ -23,15 +25,20 @@ def predict(image, labels, model):
     # Inference using pre-trained ``AlexNet`` model available in ``torchvision.models``
     model.eval()
     out = model(batch_t)
-    print(out.shape)
     
     _, index = torch.max(out, 1)
     percentage = torch.nn.functional.softmax(out, dim=1)[0] * 100
-    print(labels[index[0]], percentage[index[0]].item())
     _, indices = torch.sort(out, descending=True)
     print(
         [(labels[idx], percentage[idx].item()) for idx in indices[0][:5]])
 
+    return (labels[index[0]], percentage[index[0]].item())
+
+
+def print_details(name, image_path, labels, resnet101):
+    label, confidence = predict(image_path, labels, resnet101)
+    print("{} is identified as : {}\twith confidence : {}".format(name, label, confidence))
+    print()
 
 test_example_dog = pathlib.Path("./../../images/dog.jpg")
 test_example_fruit = pathlib.Path("./../../images/fruit.jpg")
@@ -46,7 +53,7 @@ if __name__ == '__main__':
     resnet101 = None
     for model in available_models:
         if 'resnet101' in model.lower():
-            resnet101 = models.resnet101(pretrained=True)
+            resnet101 = models.resnet101(weights=True)
             break
 
     if resnet101 is None:
@@ -56,6 +63,10 @@ if __name__ == '__main__':
     with open('imagenet_classes.txt') as f:
         labels = [line.strip() for line in f.readlines()]
 
-    predict(test_example_dog, labels, resnet101)
-    predict(test_example_fruit, labels, resnet101)
-    predict(test_example_car, labels, resnet101)
+    image_true_labels = {
+        'Dog': test_example_dog,
+        'Strawberry': test_example_fruit,
+        'Car': test_example_car
+    }
+    for t_label in image_true_labels:
+        print_details(t_label, image_true_labels[t_label], labels, resnet101)
