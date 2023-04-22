@@ -1,1 +1,2 @@
-/models/classification_model_pretrained_weights/*
+# Ignore all pretrained weights saved to `checkpoints` folder
+/models/classification_model_pretrained_weights/checkpoints/*
