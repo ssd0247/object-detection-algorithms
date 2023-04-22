@@ -22,7 +22,7 @@ def non_max_suppression(boxes, probs=None, overlapThresh=0.3):
     # compute the area of the bounding boxes and grab the indexes to sort
     # (in the case that no probability are provided, simple sort on the bottom
     # -left y-coordinate)
-    area = (x2 - x1 + 1) * (y2 - y1 + 1)
+    area = np.multiply((x2 - x1 + 1), (y2 - y1 + 1))
     idxs = y2
 
     # if probs are provided, sort on them instead
