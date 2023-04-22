@@ -7,7 +7,7 @@ from PIL.JpegImagePlugin import JpegImageFile
 # Type[np.ndarray] = cv2 support
 # Type[JpegImageFile] = PIL support
 Image_Type = Union[Type[np.ndarray], Type[JpegImageFile]]
-Image_Type_Any = Any
+Image_Type_Any = Any # NOTE: to resolve the mypy error
 
 sliding_window_return_type = Tuple[int, int, Image_Type]
 
